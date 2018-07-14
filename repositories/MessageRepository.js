@@ -1,21 +1,17 @@
 const Repository = require("./generalRepository");
 
-function MessageRepository() {
-    Repository.prototype.constructor.call(this);
+class MessageRepository extends Repository {
+  constructor() {
+    super();
 
     this.collection = this.connection.collection('messages');
-}
+  }
 
-MessageRepository.prototype = new Repository();
+  findBySenderId(id, callback) {
+    this.collection.find({ senderId: id }, { projection: { receiverId: 1, _id: 0 } }).toArray(callback);
+  }
 
-MessageRepository.prototype.findBySenderId = findBySenderId;
-MessageRepository.prototype.create = create;
-
-function findBySenderId(id, callback) {
-    this.collection.find({ senderId: id }, {projection:{ receiverId: 1, _id: 0 }}).toArray(callback);
-}
-
-function create(document, callback) {
+  create(document, callback) {
     this.collection.countDocuments((err, count) => {
       if (err) {
         return callback(err);
@@ -31,15 +27,16 @@ function create(document, callback) {
         }
 
         const result = {
-            senderId: document.senderId,
-            receiverId: document.receiverId,
-            messageBody: document.messageBody,
-            id: document.id,
+          senderId: document.senderId,
+          receiverId: document.receiverId,
+          messageBody: document.messageBody,
+          id: document.id,
         };
 
         callback(null, result);
       });
     });
   }
+}
 
 module.exports = new MessageRepository();

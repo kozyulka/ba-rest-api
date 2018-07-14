@@ -1,21 +1,17 @@
 const Repository = require("./generalRepository");
 
-function UserRepository() {
-    Repository.prototype.constructor.call(this);
+class UserRepository extends Repository {
+  constructor() {
+    super();
 
     this.collection = this.connection.collection('users');
-}
+  }
 
-UserRepository.prototype = new Repository();
+  findByIds(ids, callback) {
+    this.collection.find({ id: { $in: ids } }, { projection: { _id: 0 } }).toArray(callback);
+  }
 
-UserRepository.prototype.findByIds = findByIds;
-UserRepository.prototype.create = create;
-
-function findByIds (ids, callback) {
-    this.collection.find({id: {$in: ids}}, {projection:{ _id: 0 }}).toArray(callback);
-}
-
-function create(document, callback) {
+  create(document, callback) {
     this.collection.countDocuments((err, count) => {
       if (err) {
         return callback(err);
@@ -42,5 +38,6 @@ function create(document, callback) {
       });
     });
   }
+}
 
 module.exports = new UserRepository();
