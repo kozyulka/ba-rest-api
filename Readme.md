@@ -55,7 +55,7 @@ Message:
 ```js
 {
     "id": Number,
-    "sendererId": Number,
+    "senderId": Number,
     "receiverId": Number,
     "messageBody": String
 }
